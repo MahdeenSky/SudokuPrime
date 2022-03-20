@@ -12,13 +12,11 @@ public class SudokuWinCheck {
      * Pre-cond: assumes all entries in board are from 0 - 9
      * @return true if board is solved by traditional Sudoku rules (col, row, box have uniqye numbers 1-9.
      * Otherwise, false.
-     * Will change to work with 2-D arr of Strings instead
-     * Might change to work with instances of Sudoku objects, the array being an attr
      */
     public static boolean isBoardSolved(int[][] board) {
         return rowCheck(board) && colCheck(board) && boxCheck(board);
     }
-
+    
     public static boolean rowCheck(int [][] board) {
         HashSet<Integer> numsInRow;
         int num;
@@ -48,6 +46,7 @@ public class SudokuWinCheck {
         }
         return true;
     }
+    
     public static boolean boxCheck(int[][] board) {
         HashSet<Integer> numsInBox;
         int num, boxRow, boxCol;
