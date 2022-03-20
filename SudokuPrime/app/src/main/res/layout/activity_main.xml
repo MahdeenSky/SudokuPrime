@@ -164,5 +164,20 @@
         custom:layout_constraintStart_toStartOf="parent"
         custom:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+    <Button
+        android:id="@+id/mediumDifficultyButton"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/solve_btn"
+        android:onClick="generate"
+        android:text="@string/medium"
+        android:textSize="18sp"
+        custom:layout_constraintBottom_toBottomOf="parent"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintHorizontal_bias="0.48"
+        custom:layout_constraintStart_toStartOf="parent"
+        custom:layout_constraintTop_toBottomOf="@+id/resetButton"
+        custom:layout_constraintVertical_bias="0.22000003" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

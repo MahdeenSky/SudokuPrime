@@ -24,6 +24,10 @@ public class SudokuSolver {
         emptyBoxIndex = new ArrayList<>();
     }
 
+    public void importBoard(int[][] board_) {
+        this.board = board_;
+    }
+
     public void getEmptyBoxIndexes () {
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c< 9; c++) {

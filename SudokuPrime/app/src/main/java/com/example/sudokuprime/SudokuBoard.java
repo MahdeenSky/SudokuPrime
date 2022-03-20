@@ -31,6 +31,7 @@ public class SudokuBoard extends View {
     private int cellSize;
 
     private final SudokuSolver solver = new SudokuSolver();
+    private final SudokuGenerator generator = new SudokuGenerator();
 
     public SudokuBoard(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -140,6 +141,8 @@ public class SudokuBoard extends View {
             canvas.drawText(text, (c * cellSize) + ((cellSize - width) / 2),
                     (r * cellSize + cellSize) - ((cellSize - height) / 2), letterPaint);
         }
+
+        letterPaint.setColor(letterColor);
     }
 
     private void colorCell(Canvas canvas, int row, int column) {

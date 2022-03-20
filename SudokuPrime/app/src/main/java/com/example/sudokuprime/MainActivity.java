@@ -10,6 +10,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SudokuBoard gameBoard;
     private SudokuSolver gameBoardSolver;
+    private SudokuGenerator gameBoardGenerator;
 
     private Button solveBTN;
     private Button resetBTN;
@@ -82,6 +83,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void reset(View view) {
         gameBoardSolver.resetBoard();
+
+        gameBoard.invalidate();
+    }
+
+    public void generate(View view) {
+        int[][] board = gameBoardGenerator.getRandomBoard("hard");
+        gameBoardSolver.importBoard(board);
         gameBoard.invalidate();
     }
 
