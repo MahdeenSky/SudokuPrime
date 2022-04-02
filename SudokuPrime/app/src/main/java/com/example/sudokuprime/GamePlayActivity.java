@@ -24,24 +24,28 @@ public class GamePlayActivity extends AppCompatActivity {
         gameBoard = findViewById(R.id.SudokuBoard);
         gameBoardSolver = gameBoard.getSolver();
         //TODO: have difficulty string change depending on difficulty selected in DifficultySelctActivity
-        puzzle = gameBoardGenerator.getRandomBoard("hard");
-        gameBoardSolver.importBoard(puzzle);
-        gameBoard.invalidate();
-        puzzle = SudokuWinCheck.copyBoard(puzzle);
+        puzzle = gameBoardGenerator.getRandomBoard("easy");
         enterBTN = findViewById(R.id.enterButton);
         enterBTN.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int[][] currBoard = gameBoardSolver.getBoard();
-                if(SudokuWinCheck.isBoardSolved(currBoard)) {
-                    openWinScnActivity();
-                }
+                openWinScnActivity();
             }
         });
     }
-    public void openWinScnActivity() {
+    @Override
+    protected void onStart() {
+        super.onStart();
+        gameBoardSolver.importBoard(puzzle);
+        puzzle = SudokuWinCheck.copyBoard(puzzle);
+    }
+
+    private void openWinScnActivity() {
         Intent intent = new Intent(this, WinScnActivity.class);
-        startActivity(intent);
+        int[][] currBoard = gameBoardSolver.getBoard();
+        if(SudokuWinCheck.isBoardSolved(currBoard))
+            startActivity(intent);
+
     }
 
     private boolean isPuzzlePosZero() {
