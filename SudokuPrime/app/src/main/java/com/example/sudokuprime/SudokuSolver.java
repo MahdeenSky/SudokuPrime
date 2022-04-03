@@ -65,7 +65,7 @@ public class SudokuSolver {
         return true;
     }
 
-    public boolean solve(SudokuBoard display) {
+    public boolean solveVisually(SudokuBoard display) {
         int row = -1;
         int col = -1;
 
@@ -88,13 +88,17 @@ public class SudokuSolver {
             display.invalidate();
 
             if (check(row, col)) {
-                if (solve(display)) {
+                if (solveVisually(display)) {
                     return true;
                 }
             }
             this.board[row][col] = 0;
         }
         return false;
+    }
+
+    public int[][] solve(int[][] board) {
+        return board;
     }
 
     public void resetBoard() {
@@ -114,6 +118,10 @@ public class SudokuSolver {
                 this.board[selected_row - 1][selected_column - 1] = num;
             }
         }
+    }
+
+    public void setHint() {
+
     }
 
     public int[][] getBoard() {

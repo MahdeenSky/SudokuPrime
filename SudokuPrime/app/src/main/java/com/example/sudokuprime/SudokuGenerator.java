@@ -14,7 +14,7 @@ public class SudokuGenerator {
         // Host url
         String host = "https://sugoku.herokuapp.com/board";
         String charset = "UTF-8";
-        String query = host + "?" + String.format("difficulty=%s", difficulty);
+        String query = host + "?" + String.format("difficulty=%s", difficulty.toLowerCase());
         // Format query for preventing encoding problems
         JSONObject json = null;
         int[][] board = new int[9][9];

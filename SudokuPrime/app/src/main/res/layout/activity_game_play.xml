@@ -4,21 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GamePlayActivity">
+    tools:context=".GamePlayActivity"
+    android:background="@drawable/background">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        custom:layout_constraintBottom_toTopOf="@+id/SudokuBoard"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintStart_toStartOf="parent"
+        custom:layout_constraintTop_toTopOf="parent">
+
+        <Chronometer
+            android:id="@+id/chronometer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="34sp" />
+    </LinearLayout>
+
 
     <com.example.sudokuprime.SudokuBoard
         android:id="@+id/SudokuBoard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="80dp"
+        android:background="@color/white"
         custom:boardColor="@color/black"
         custom:cellFillColor="@color/teal_200"
         custom:cellHighlightColor="#2600DDFF"
-        custom:letterColor="@color/black"
-        custom:letterColorSolve="@color/green"
         custom:layout_constraintEnd_toEndOf="parent"
         custom:layout_constraintStart_toStartOf="parent"
-        custom:layout_constraintTop_toTopOf="parent">
+        custom:layout_constraintTop_toTopOf="parent"
+        custom:letterColor="@color/black"
+        custom:letterColorSolve="@color/green">
 
     </com.example.sudokuprime.SudokuBoard>
 
@@ -31,6 +50,7 @@
         custom:layout_constraintStart_toStartOf="parent"
         custom:layout_constraintTop_toBottomOf="@+id/SudokuBoard"
         android:layout_marginTop="30dp"
+        android:background="#F3FCF4"
         >
 
         <Button
@@ -135,44 +155,77 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/enterButton"
-        android:layout_width="125dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:background="@drawable/solve_btn"
-        android:text="@string/enter"
-        android:textSize="18sp"
-        custom:layout_constraintEnd_toStartOf="@+id/clearButton"
-        custom:layout_constraintHorizontal_bias="0.409"
-        custom:layout_constraintStart_toStartOf="parent"
-        custom:layout_constraintTop_toBottomOf="@id/linearLayout" />
-
-    <Button
         android:id="@+id/clearButton"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/solve_btn"
+        android:text="@string/clear"
+        android:textSize="18sp"
+        android:onClick="clear"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintHorizontal_bias="0.49"
+        custom:layout_constraintStart_toStartOf="parent"
+        custom:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <Button
+        android:id="@+id/hintButton"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:background="@drawable/solve_btn"
         android:onClick="clear"
-        android:text="@string/clear"
+        android:text="@string/hint"
+        android:textSize="18sp"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintHorizontal_bias="0.2"
+        custom:layout_constraintStart_toStartOf="parent"
+        custom:layout_constraintTop_toBottomOf="@+id/clearButton" />
+
+    <Button
+        android:id="@+id/solveButton"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/solve_btn"
+        android:onClick="solve"
+        android:text="@string/solve"
         android:textSize="18sp"
         custom:layout_constraintEnd_toEndOf="parent"
         custom:layout_constraintHorizontal_bias="0.8"
         custom:layout_constraintStart_toStartOf="parent"
-        custom:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        custom:layout_constraintTop_toBottomOf="@+id/clearButton" />
 
     <Button
         android:id="@+id/backButton"
         android:layout_width="125dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:background="@drawable/solve_btn"
+        android:onClick="back"
         android:text="@string/back"
         android:textSize="18sp"
         custom:layout_constraintBottom_toBottomOf="parent"
         custom:layout_constraintEnd_toEndOf="parent"
-        custom:layout_constraintHorizontal_bias="0.48"
+        custom:layout_constraintHorizontal_bias="0.8"
         custom:layout_constraintStart_toStartOf="parent"
-        custom:layout_constraintTop_toBottomOf="@+id/clearButton"
+        custom:layout_constraintTop_toBottomOf="@+id/hintButton"
+        custom:layout_constraintVertical_bias="0.22000003" />
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="125dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/solve_btn"
+        android:onClick="reset"
+        android:text="@string/reset"
+        android:textSize="18sp"
+        custom:layout_constraintBottom_toBottomOf="parent"
+        custom:layout_constraintEnd_toEndOf="parent"
+        custom:layout_constraintHorizontal_bias="0.2"
+        custom:layout_constraintStart_toStartOf="parent"
+        custom:layout_constraintTop_toBottomOf="@+id/hintButton"
         custom:layout_constraintVertical_bias="0.22000003" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Chronometer;
 
 public class GamePlayActivity extends AppCompatActivity {
 
@@ -16,28 +19,33 @@ public class GamePlayActivity extends AppCompatActivity {
     private Button enterBTN;
     private int[][] puzzle;
 
+    private Chronometer chronometer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_play);
 
+        // get the difficulty
+        Bundle bundle = getIntent().getExtras();
+        String difficulty = bundle.getString("difficulty");
+        Log.i("DIfficulty", difficulty);
+
         gameBoard = findViewById(R.id.SudokuBoard);
         gameBoardSolver = gameBoard.getSolver();
-        //TODO: have difficulty string change depending on difficulty selected in DifficultySelctActivity
-        puzzle = gameBoardGenerator.getRandomBoard("easy");
-        enterBTN = findViewById(R.id.enterButton);
-        enterBTN.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openWinScnActivity();
-            }
-        });
+        chronometer = findViewById(R.id.chronometer);
+        //TODO: have difficulty string change depending on difficulty selected in DifficultySelectActivity
+        puzzle = gameBoardGenerator.getRandomBoard(difficulty);
     }
     @Override
     protected void onStart() {
         super.onStart();
         gameBoardSolver.importBoard(puzzle);
         puzzle = SudokuWinCheck.copyBoard(puzzle);
+
+        // timer
+        chronometer.setBase(SystemClock.elapsedRealtime());
+        chronometer.start();
     }
 
     private void openWinScnActivity() {
@@ -119,10 +127,63 @@ public class GamePlayActivity extends AppCompatActivity {
             gameBoard.invalidate();
         }
     }
+
     public void clear(View view) {
+        gameBoardSolver.setNumberPos(0);
+    }
+
+    public void reset(View view) {
         gameBoardSolver.importBoard(puzzle);
         gameBoard.invalidate();
         puzzle = SudokuWinCheck.copyBoard(puzzle);
     }
+
+    public void solve(View view) {
+        gameBoardSolver.getEmptyBoxIndexes();
+
+        SolveBoardThread solveBoardThread = new SolveBoardThread();
+        new Thread(solveBoardThread).start();
+
+        chronometer.stop();
+        gameBoard.invalidate();
+    }
+
+    public void back(View v) {
+        onBackPressed();
+    }
+
+
+    // parsing the timer
+    public static int getSecondsFromDurationString(String value){
+
+        String [] parts = value.split(":");
+
+        // Wrong format, no value for you.
+        if(parts.length < 2 || parts.length > 3)
+            return 0;
+
+        int seconds = 0, minutes = 0, hours = 0;
+
+        if(parts.length == 2){
+            seconds = Integer.parseInt(parts[1]);
+            minutes = Integer.parseInt(parts[0]);
+        }
+        else if(parts.length == 3){
+            seconds = Integer.parseInt(parts[2]);
+            minutes = Integer.parseInt(parts[1]);
+            hours = Integer.parseInt(parts[0]);
+        }
+
+        return seconds + (minutes*60) + (hours*3600);
+    }
+
+    class SolveBoardThread implements Runnable {
+        @Override
+        public void run() {
+            gameBoardSolver.solveVisually(gameBoard);
+        }
+    }
+
+
 
 }

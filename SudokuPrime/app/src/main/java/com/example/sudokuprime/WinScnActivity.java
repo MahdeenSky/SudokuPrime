@@ -33,7 +33,7 @@ public class WinScnActivity extends AppCompatActivity {
         });
     }
     private void toHomeMenuActivity() {
-        Intent intent = new Intent(this, HomeMenuActivity.class);
+        Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
     private void toDifficultySelect() {

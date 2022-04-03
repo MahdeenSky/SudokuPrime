@@ -2,101 +2,44 @@ package com.example.sudokuprime;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SudokuBoard gameBoard;
-    private SudokuSolver gameBoardSolver;
-    private SudokuGenerator gameBoardGenerator;
-
-    private Button solveBTN;
-    private Button resetBTN;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_home_menu);
 
-        gameBoard = findViewById(R.id.SudokuBoard);
-        gameBoardSolver = gameBoard.getSolver();
-
-        solveBTN = findViewById(R.id.solveButton);
-        resetBTN = findViewById(R.id.resetButton);
     }
 
-    public void BTNOnePress(View view) {
-        gameBoardSolver.setNumberPos(1);
-        gameBoard.invalidate();
-    }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-    public void BTNTwoPress(View view) {
-        gameBoardSolver.setNumberPos(2);
-        gameBoard.invalidate();
-    }
-
-    public void BTNThreePress(View view) {
-        gameBoardSolver.setNumberPos(3);
-        gameBoard.invalidate();
-    }
-
-    public void BTNFourPress(View view) {
-        gameBoardSolver.setNumberPos(4);
-        gameBoard.invalidate();
-    }
-
-    public void BTNFivePress(View view) {
-        gameBoardSolver.setNumberPos(5);
-        gameBoard.invalidate();
-    }
-
-    public void BTNSixPress(View view) {
-        gameBoardSolver.setNumberPos(6);
-        gameBoard.invalidate();
-    }
-
-    public void BTNSevenPress(View view) {
-        gameBoardSolver.setNumberPos(7);
-        gameBoard.invalidate();
-    }
-
-    public void BTNEightPress(View view) {
-        gameBoardSolver.setNumberPos(8);
-        gameBoard.invalidate();
-    }
-
-    public void BTNNinePress(View view) {
-        gameBoardSolver.setNumberPos(9);
-        gameBoard.invalidate();
-    }
-
-    public void solve(View view) {
-        gameBoardSolver.getEmptyBoxIndexes();
-
-        SolveBoardThread solveBoardThread = new SolveBoardThread();
-        new Thread(solveBoardThread).start();
-
-        gameBoard.invalidate();
-    }
-
-    public void reset(View view) {
-        gameBoardSolver.resetBoard();
-
-        gameBoard.invalidate();
-    }
-
-    public void generate(View view) {
-        int[][] board = gameBoardGenerator.getRandomBoard("hard");
-        gameBoardSolver.importBoard(board);
-        gameBoard.invalidate();
-    }
-
-    class SolveBoardThread implements Runnable {
-        @Override
-        public void run() {
-            gameBoardSolver.solve(gameBoard);
+        // music
+        SharedPreferences settings = getApplicationContext().getSharedPreferences("Options", 0);
+        Boolean musicEnabled = settings.getBoolean("Music", true);
+        if (musicEnabled) {
+            playBGMusic();
         }
     }
+
+    public void openDifficultySelectActivity(View v) {
+        startActivity(new Intent(MainActivity.this, DifficultySelectActivity.class));
+    }
+
+    public void openOptionsActivity(View v) {
+        startActivity(new Intent(MainActivity.this, OptionsActivity.class));
+    }
+
+    public void playBGMusic() {
+        Intent bg = new Intent(this, BackgroundMusicService.class);
+        startService(bg);
+    }
+
 }
