@@ -40,18 +40,11 @@ public class BackgroundMusicService extends Service {
         return null;
     }
 
-    public void onStop() {
-        player.stop();
-    }
-
-    public void onPause() {
-        player.pause();
-    }
-
     @Override
     public void onDestroy() {
 
         player.stop();
+        player.reset();
         player.release();
     }
 

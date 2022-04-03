@@ -1,14 +1,26 @@
 package com.example.sudokuprime;
 
+import android.util.Log;
+
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SudokuSolver {
 
     int[][] board;
+    int[][] originalBoard;
+    int[][] solvedBoard;
     ArrayList<ArrayList<Object>> emptyBoxIndex;
+    Set<ArrayList<Integer>> hintIndex = new HashSet<>();
 
     private static int selected_row;
     private static int selected_column;
+
+    Boolean isSolved = false;
 
     SudokuSolver() {
         selected_row = -1;
@@ -25,10 +37,15 @@ public class SudokuSolver {
     }
 
     public void importBoard(int[][] board_) {
+
         this.board = board_;
+        this.originalBoard = deepCopy(board_);
+        this.solvedBoard = deepCopy(this.board);
+        this.solve();
     }
 
     public void getEmptyBoxIndexes () {
+        emptyBoxIndex = new ArrayList<>();
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c< 9; c++) {
                 if (this.board[r][c] == 0) {
@@ -40,13 +57,13 @@ public class SudokuSolver {
         }
     }
 
-    private boolean check(int row, int col) {
-        if (this.board[row][col] > 0) {
+    private boolean check(int[][] board, int row, int col) {
+        if (board[row][col] > 0) {
             for (int i = 0; i < 9; i++) {
-                if (this.board[i][col] == this.board[row][col] && row != i) {
+                if (board[i][col] == board[row][col] && row != i) {
                     return false;
                 }
-                if (this.board[row][i] == this.board[row][col] && col != i) {
+                if (board[row][i] == board[row][col] && col != i) {
                     return false;
                 }
             }
@@ -56,7 +73,7 @@ public class SudokuSolver {
 
             for (int r = boxRow * 3; r < 3 * boxRow + 3; r++) {
                 for (int c = boxCol * 3; c < 3 * boxCol + 3; c++) {
-                    if (this.board[r][c] == this.board[row][col] && row != r && col != c) {
+                    if (board[r][c] == board[row][col] && row != r && col != c) {
                         return false;
                     }
                 }
@@ -66,6 +83,7 @@ public class SudokuSolver {
     }
 
     public boolean solveVisually(SudokuBoard display) {
+        this.isSolved = true;
         int row = -1;
         int col = -1;
 
@@ -87,7 +105,7 @@ public class SudokuSolver {
             this.board[row][col] = i;
             display.invalidate();
 
-            if (check(row, col)) {
+            if (check(this.board, row, col)) {
                 if (solveVisually(display)) {
                     return true;
                 }
@@ -97,8 +115,35 @@ public class SudokuSolver {
         return false;
     }
 
-    public int[][] solve(int[][] board) {
-        return board;
+    public Boolean solve() {
+        int row = -1;
+        int col = -1;
+
+        for (int r = 0; r < 9; r++) {
+            for (int c = 0; c < 9; c++) {
+                if (this.solvedBoard[r][c] == 0) {
+                    row = r;
+                    col = c;
+                    break;
+                }
+            }
+        }
+
+        if (row == -1 || col == -1) {
+            return true;
+        }
+
+        for (int i = 1; i < 10; i++) {
+            this.solvedBoard[row][col] = i;
+            if (check(this.solvedBoard, row, col)) {
+                if (solve()) {
+//                    Log.i("ARRAY", Arrays.deepToString(this.solvedBoard));
+                    return true;
+                }
+            }
+            this.solvedBoard[row][col] = 0;
+        }
+        return false;
     }
 
     public void resetBoard() {
@@ -120,8 +165,35 @@ public class SudokuSolver {
         }
     }
 
-    public void setHint() {
+    public static int[][] deepCopy(int[][] original) {
+        if (original == null) {
+            return null;
+        }
 
+        final int[][] result = new int[original.length][];
+        for (int i = 0; i < original.length; i++) {
+            result[i] = Arrays.copyOf(original[i], original[i].length);
+            // For Java versions prior to Java 6 use the next:
+            // System.arraycopy(original[i], 0, result[i], 0, original[i].length);
+        }
+        return result;
+    }
+
+    public void setHint() {
+        // get a random array from emptyBoxIndex
+        if (this.emptyBoxIndex.size() != 0) {
+            int randomIndex = (int) (Math.random() * this.emptyBoxIndex.size());
+            int row = (int) this.emptyBoxIndex.get(randomIndex).get(0);
+            int col = (int) this.emptyBoxIndex.get(randomIndex).get(1);
+            ArrayList<Integer> currentIndex = new ArrayList<>(Arrays.asList(row, col));
+            this.hintIndex.add(currentIndex);
+            this.board[row][col] = this.solvedBoard[row][col];
+        }
+    }
+
+    public Boolean originalIndex() {
+        Log.i("original index", String.valueOf(this.originalBoard[selected_row-1][selected_column-1]));
+        return this.originalBoard[selected_row-1][selected_column-1] != 0;
     }
 
     public int[][] getBoard() {

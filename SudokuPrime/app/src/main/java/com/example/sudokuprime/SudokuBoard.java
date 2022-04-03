@@ -6,12 +6,18 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SudokuBoard extends View {
     private final int boardColor;
@@ -20,7 +26,9 @@ public class SudokuBoard extends View {
 
     private final int letterColor;
     private final int letterColorSolve;
-    
+    private final int letterColorCorrect;
+    private final int letterColorWrong;
+
     private final Paint boardColorPaint = new Paint();
     private final Paint cellFillColorPaint = new Paint();
     private final Paint cellHighlightColorPaint = new Paint();
@@ -29,6 +37,7 @@ public class SudokuBoard extends View {
     private final Rect letterPaintBounds = new Rect();
 
     private int cellSize;
+    private ArrayList<Integer> currentIndex;
 
     private final SudokuSolver solver = new SudokuSolver();
     private final SudokuGenerator generator = new SudokuGenerator();
@@ -45,6 +54,8 @@ public class SudokuBoard extends View {
             cellHighlightColor = a.getInteger(R.styleable.SudokuBoard_cellHighlightColor, 0);
             letterColor = a.getInteger(R.styleable.SudokuBoard_letterColor, 0);
             letterColorSolve = a.getInteger(R.styleable.SudokuBoard_letterColorSolve, 0);
+            letterColorCorrect = a.getInteger(R.styleable.SudokuBoard_letterColorCorrect, 0);
+            letterColorWrong = a.getInteger(R.styleable.SudokuBoard_letterColorWrong, 0);
         } finally {
             a.recycle();
         }
@@ -115,34 +126,54 @@ public class SudokuBoard extends View {
                     String text = Integer.toString(solver.getBoard()[r][c]);
                     float width, height;
 
+
                     letterPaint.getTextBounds(text, 0, text.length(), letterPaintBounds);
                     width = letterPaint.measureText(text);
                     height = letterPaintBounds.height();
 
+                    // cool set method to check an array exists in the set
+//                    currentIndex = new int[]{r, c};
+//                    if (solver.hintIndex.stream().anyMatch(x -> Arrays.equals(x, currentIndex))) {
+//                        letterPaint.setColor(letterColorHint);
+//                    }
+                    currentIndex = new ArrayList<>();
+                    currentIndex.add(r);
+                    currentIndex.add(c);
+                    if (solver.originalBoard[r][c] == 0 ||
+                            solver.hintIndex.stream().anyMatch(currentIndex::equals)) {
+                        if (text.equals(String.valueOf(solver.solvedBoard[r][c])) ) {
+                            letterPaint.setColor(letterColorCorrect);
+                        } else {
+                            letterPaint.setColor(letterColorWrong);
+                        }
+                    }
+
                     canvas.drawText(text, (c * cellSize) + ((cellSize - width) / 2),
                             (r * cellSize + cellSize) - ((cellSize - height) / 2), letterPaint);
+                    letterPaint.setColor(letterColor);
                 }
             }
         }
 
-        letterPaint.setColor(letterColorSolve);
+        if (solver.isSolved) {
+            letterPaint.setColor(letterColorSolve);
+            for (ArrayList<Object> letter : solver.getEmptyBoxIndex()) {
+                int r = (int) letter.get(0);
+                int c = (int) letter.get(1);
 
-        for (ArrayList<Object> letter : solver.getEmptyBoxIndex()) {
-            int r = (int) letter.get(0);
-            int c = (int) letter.get(1);
+                String text = Integer.toString(solver.getBoard()[r][c]);
+                float width, height;
 
-            String text = Integer.toString(solver.getBoard()[r][c]);
-            float width, height;
+                letterPaint.getTextBounds(text, 0, text.length(), letterPaintBounds);
+                width = letterPaint.measureText(text);
+                height = letterPaintBounds.height();
 
-            letterPaint.getTextBounds(text, 0, text.length(), letterPaintBounds);
-            width = letterPaint.measureText(text);
-            height = letterPaintBounds.height();
+                canvas.drawText(text, (c * cellSize) + ((cellSize - width) / 2),
+                        (r * cellSize + cellSize) - ((cellSize - height) / 2), letterPaint);
+            }
 
-            canvas.drawText(text, (c * cellSize) + ((cellSize - width) / 2),
-                    (r * cellSize + cellSize) - ((cellSize - height) / 2), letterPaint);
+            letterPaint.setColor(letterColor);
         }
-
-        letterPaint.setColor(letterColor);
     }
 
     private void colorCell(Canvas canvas, int row, int column) {

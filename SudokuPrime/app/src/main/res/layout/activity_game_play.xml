@@ -37,7 +37,9 @@
         custom:layout_constraintStart_toStartOf="parent"
         custom:layout_constraintTop_toTopOf="parent"
         custom:letterColor="@color/black"
-        custom:letterColorSolve="@color/green">
+        custom:letterColorSolve="#008b00"
+        custom:letterColorCorrect="#00008b"
+        custom:letterColorWrong="#8b0000">
 
     </com.example.sudokuprime.SudokuBoard>
 
@@ -174,7 +176,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="@drawable/solve_btn"
-        android:onClick="clear"
+        android:onClick="hint"
         android:text="@string/hint"
         android:textSize="18sp"
         custom:layout_constraintEnd_toEndOf="parent"
