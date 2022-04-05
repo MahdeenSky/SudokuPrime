@@ -32,6 +32,7 @@ public class OptionsActivity extends AppCompatActivity {
             Button soundBtn = findViewById(R.id.buttonSound);
             soundBtn.setText("Sound ✗");
         }
+        
     }
 
     public void toggleSound(View v) {
