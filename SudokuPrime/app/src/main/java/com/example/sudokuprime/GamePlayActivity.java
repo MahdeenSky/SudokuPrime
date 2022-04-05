@@ -3,6 +3,7 @@ package com.example.sudokuprime;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -13,6 +14,9 @@ import android.widget.Chronometer;
 import java.util.ArrayList;
 
 public class GamePlayActivity extends AppCompatActivity {
+
+    SharedPreferences settings;
+    private Boolean isVisualized;
 
     private SudokuBoard gameBoard;
     private SudokuSolver gameBoardSolver;
@@ -27,6 +31,9 @@ public class GamePlayActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_play);
+
+        settings = getApplicationContext().getSharedPreferences("Options", 0);
+        isVisualized = settings.getBoolean("visualizeSolving", false);
 
         // get the difficulty
         Bundle bundle = getIntent().getExtras();
@@ -44,6 +51,7 @@ public class GamePlayActivity extends AppCompatActivity {
         super.onStart();
 
         gameBoardSolver.importBoard(puzzle);
+        gameBoardSolver.isVisualized = this.isVisualized;
         startTimer();
     }
 
@@ -88,6 +96,10 @@ public class GamePlayActivity extends AppCompatActivity {
         return !gameBoardSolver.originalIndex();
     }
 
+    private boolean isNotVisualizing() {
+        return !gameBoardSolver.isVisualizing;
+    }
+
     public void onNumBtnClicked(View v) {
         if (isNotIndexHint() && isNotSolved() && isNotOriginalIndex()) {
             currentBtn = (Button) v;
@@ -99,95 +111,6 @@ public class GamePlayActivity extends AppCompatActivity {
             openWinScnActivity();
         }
     }
-//    public void BTNOnePress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(1);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNTwoPress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(2);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNThreePress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(3);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNFourPress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(4);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNFivePress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(5);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNSixPress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(6);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNSevenPress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(7);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNEightPress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(8);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
-//
-//    public void BTNNinePress(View view) {
-//        if(isPuzzlePosZero() && !isIndexHint()  && !isGameSolved()) {
-//            gameBoardSolver.setNumberPos(9);
-//            gameBoard.invalidate();
-//        }
-//        if (checkSudoku()) {
-//            openWinScnActivity();
-//        }
-//    }
 
     public void clear(View view) {
         if (isNotIndexHint() && isNotSolved() && isNotOriginalIndex()) {
@@ -197,15 +120,18 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void reset(View view) {
-        gameBoardSolver.isSolved = false;
-        gameBoardSolver.importBoard(puzzle);
-        gameBoardSolver.resetHintIndex();
-        gameBoard.invalidate();
-        startTimer();
+        if (isNotVisualizing()) {
+            gameBoardSolver.isSolved = false;
+            gameBoardSolver.importBoard(puzzle);
+            gameBoardSolver.resetHintIndex();
+            gameBoard.invalidate();
+            startTimer();
+        }
     }
 
     public void solve(View view) {
         if (isNotSolved()) {
+            gameBoardSolver.isVisualizing = true;
             gameBoardSolver.board = gameBoardSolver.originalBoard;
             gameBoardSolver.getEmptyBoxIndexes();
 
@@ -260,6 +186,7 @@ public class GamePlayActivity extends AppCompatActivity {
         @Override
         public void run() {
             gameBoardSolver.solveVisually(gameBoard);
+            gameBoardSolver.isVisualizing = false;
         }
     }
 

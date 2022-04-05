@@ -12,81 +12,80 @@ import android.widget.Button;
 
 public class OptionsActivity extends AppCompatActivity {
 
+    SharedPreferences settings;
+    SharedPreferences.Editor editor;
+
+    Boolean musicEnabled;
+    Boolean soundEnabled;
+    Boolean visualizeSolvingEnabled;
+    Button musicBtn;
+    Button soundBtn;
+    Button visualizeSolvingBtn;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
+
+        settings = getApplicationContext().getSharedPreferences("Options", 0);
+        editor = settings.edit();
+
+        musicBtn = findViewById(R.id.buttonMusic);
+        soundBtn = findViewById(R.id.buttonSound);
+        visualizeSolvingBtn = findViewById(R.id.buttonVisualizer);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        SharedPreferences settings = getApplicationContext().getSharedPreferences("Options", 0);
-        Boolean musicEnabled = settings.getBoolean("Music", true);
-        Boolean soundEnabled = settings.getBoolean("Sound", true);
+
+        musicEnabled = settings.getBoolean("Music", true);
+        soundEnabled = settings.getBoolean("Sound", true);
+        visualizeSolvingEnabled = settings.getBoolean("visualizeSolving", false);
         if (!musicEnabled) {
-            Button musicBtn = findViewById(R.id.buttonMusic);
             musicBtn.setText("Music ✗");
         }
         if (!soundEnabled) {
-            Button soundBtn = findViewById(R.id.buttonSound);
             soundBtn.setText("Sound ✗");
         }
-        
+        if (visualizeSolvingEnabled) {
+            visualizeSolvingBtn.setText("Visualize Solving ✓");
+        }
     }
 
     public void toggleSound(View v) {
-        Button soundBtn = findViewById(R.id.buttonSound);
         // change text of button to "Music ✗"" or "Music ✓"
         if (soundBtn.getText().equals("Sound ✗")) {
             soundBtn.setText("Sound ✓");
-        } else {
-            soundBtn.setText("Sound ✗");
-        }
-
-        SharedPreferences settings = getApplicationContext().getSharedPreferences("Options", 0);
-        Boolean soundEnabled = settings.getBoolean("Sound", true);
-
-        if (soundEnabled) {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("Sound", false);
-            editor.apply();
-            // turn off system sound
-            AudioManager manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-            manager.setStreamVolume(AudioManager.STREAM_ALARM, 0, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
-        } else {
-            SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("Sound", true);
             editor.apply();
             // turn on system sound
             AudioManager manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             manager.setStreamVolume(AudioManager.STREAM_ALARM, manager.getStreamMaxVolume(AudioManager.STREAM_ALARM), AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
+
+        } else {
+            soundBtn.setText("Sound ✗");
+            editor.putBoolean("Sound", false);
+            editor.apply();
+            // turn off system sound
+            AudioManager manager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            manager.setStreamVolume(AudioManager.STREAM_ALARM, 0, AudioManager.FLAG_REMOVE_SOUND_AND_VIBRATE);
         }
     }
 
     public void toggleMusic(View v) {
-        Button musicBtn = findViewById(R.id.buttonMusic);
         // change text of button to "Music ✗"" or "Music ✓"
         if (musicBtn.getText().equals("Music ✗")) {
             musicBtn.setText("Music ✓");
-        } else {
-            musicBtn.setText("Music ✗");
-        }
-
-        // fetching the current option for music
-        SharedPreferences settings = getApplicationContext().getSharedPreferences("Options", 0);
-        Boolean musicEnabled = settings.getBoolean("Music", true);
-
-        if (musicEnabled) {
-            SharedPreferences.Editor editor = settings.edit();
-            editor.putBoolean("Music", false);
-            editor.apply();
-            stopService(new Intent(this, BackgroundMusicService.class));
-        } else {
-            SharedPreferences.Editor editor = settings.edit();
             editor.putBoolean("Music", true);
             editor.apply();
             playBGMusic();
+
+        } else {
+            musicBtn.setText("Music ✗");
+            editor.putBoolean("Music", false);
+            editor.apply();
+            stopService(new Intent(this, BackgroundMusicService.class));
         }
     }
 
@@ -97,6 +96,20 @@ public class OptionsActivity extends AppCompatActivity {
     public void playBGMusic() {
         Intent bg = new Intent(this, BackgroundMusicService.class);
         startService(bg);
+    }
+
+    public void toggleVisualizeSolving(View v) {
+        if (visualizeSolvingBtn.getText().equals("Visualize Solving ✓")) {
+            visualizeSolvingBtn.setText("Visualize Solving ✗");
+            editor.putBoolean("visualizeSolving", false);
+            editor.apply();
+
+        } else {
+            visualizeSolvingBtn.setText("Visualize Solving ✓");
+            editor.putBoolean("visualizeSolving", true);
+            editor.apply();
+        }
+
     }
 
 }

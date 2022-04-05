@@ -21,6 +21,8 @@ public class SudokuSolver {
     private static int selected_column;
 
     Boolean isSolved = false;
+    Boolean isVisualized = false;
+    Boolean isVisualizing = false;
 
     SudokuSolver() {
         selected_row = -1;
@@ -103,6 +105,13 @@ public class SudokuSolver {
 
         for (int i = 1; i < 10; i++) {
             this.board[row][col] = i;
+            if (this.isVisualized) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
             display.invalidate();
 
             if (check(this.board, row, col)) {
@@ -192,9 +201,16 @@ public class SudokuSolver {
     }
 
     public Boolean originalIndex() {
-        Log.i("original index", String.valueOf(this.originalBoard[selected_row-1][selected_column-1]));
-        return this.originalBoard[selected_row-1][selected_column-1] != 0;
+        if (selected_row != -1 && selected_column != -1) {
+            return this.originalBoard[selected_row - 1][selected_column - 1] != 0;
+        }
+        return false;
     }
+
+    public Boolean isValidIndex(int r, int c) {
+        return (r > -1) && (r < 9) && (c > -1) && (c < 9);
+    }
+
 
     public int[][] getBoard() {
         return this.board;

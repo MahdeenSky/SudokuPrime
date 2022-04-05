@@ -8,5 +8,6 @@
         <attr name="letterColorSolve" format="color" />
         <attr name="letterColorCorrect" format="color" />
         <attr name="letterColorWrong" format="color" />
+        <attr name="letterColorSameNum" format="color" />
     </declare-styleable>
 </resources>

@@ -55,13 +55,27 @@
         android:layout_width="267dp"
         android:layout_height="wrap_content"
         android:background="@drawable/solve_btn"
+        android:onClick="Back"
         android:text="Back ⇐"
         android:textSize="18sp"
-        android:onClick="Back"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView2"
-        app:layout_constraintVertical_bias="0.419" />
+        app:layout_constraintVertical_bias="0.56" />
+
+    <Button
+        android:id="@+id/buttonVisualizer"
+        android:layout_width="267dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/solve_btn"
+        android:onClick="toggleVisualizeSolving"
+        android:text="Visualize Solving ✗"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView2"
+        app:layout_constraintVertical_bias="0.41000003" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

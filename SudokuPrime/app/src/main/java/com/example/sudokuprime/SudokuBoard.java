@@ -28,6 +28,7 @@ public class SudokuBoard extends View {
     private final int letterColorSolve;
     private final int letterColorCorrect;
     private final int letterColorWrong;
+    private final int letterColorSameNum;
 
     private final Paint boardColorPaint = new Paint();
     private final Paint cellFillColorPaint = new Paint();
@@ -38,9 +39,13 @@ public class SudokuBoard extends View {
 
     private int cellSize;
     private ArrayList<Integer> currentIndex;
+    private ArrayList<Integer> selectedIndex;
+
+    private int selectedRow;
+    private int selectedColumn;
+    private int selectedNum;
 
     private final SudokuSolver solver = new SudokuSolver();
-    private final SudokuGenerator generator = new SudokuGenerator();
 
     public SudokuBoard(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -56,6 +61,7 @@ public class SudokuBoard extends View {
             letterColorSolve = a.getInteger(R.styleable.SudokuBoard_letterColorSolve, 0);
             letterColorCorrect = a.getInteger(R.styleable.SudokuBoard_letterColorCorrect, 0);
             letterColorWrong = a.getInteger(R.styleable.SudokuBoard_letterColorWrong, 0);
+            letterColorSameNum = a.getInteger(R.styleable.SudokuBoard_letterColorSameNum, 0);
         } finally {
             a.recycle();
         }
@@ -99,21 +105,25 @@ public class SudokuBoard extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        boolean isValid;
+        boolean isValidCell;
 
         float x = event.getX();
         float y = event.getY();
 
         int action = event.getAction();
+        selectedRow = ((int) Math.ceil(y / cellSize));
+        selectedColumn = ((int) Math.ceil(x / cellSize));
 
-        if (action == MotionEvent.ACTION_DOWN) {
-            solver.setSelectedRow((int) Math.ceil(y / cellSize));
-            solver.setSelectedColumn((int) Math.ceil(x / cellSize));
-            isValid = true;
+        if (action == MotionEvent.ACTION_DOWN && solver.isValidIndex(selectedRow-1, selectedColumn-1)) {
+            solver.setSelectedRow(selectedRow);
+            solver.setSelectedColumn(selectedColumn);
+            selectedNum = solver.getBoard()[selectedRow-1][selectedColumn-1];
+            selectedIndex = new ArrayList<>(Arrays.asList(selectedRow-1, selectedColumn-1));
+            isValidCell = true;
         } else {
-            isValid = false;
+            isValidCell = false;
         }
-        return isValid;
+        return isValidCell;
     }
 
     private void drawNumber(Canvas canvas) {
@@ -123,10 +133,10 @@ public class SudokuBoard extends View {
         for (int r = 0; r < 9; r++) {
             for (int c = 0; c < 9; c++) {
                 if (solver.getBoard()[r][c] != 0) {
-                    String text = Integer.toString(solver.getBoard()[r][c]);
+                    int num = solver.getBoard()[r][c];
+                    String text = Integer.toString(num);
+
                     float width, height;
-
-
                     letterPaint.getTextBounds(text, 0, text.length(), letterPaintBounds);
                     width = letterPaint.measureText(text);
                     height = letterPaintBounds.height();
@@ -136,9 +146,7 @@ public class SudokuBoard extends View {
 //                    if (solver.hintIndex.stream().anyMatch(x -> Arrays.equals(x, currentIndex))) {
 //                        letterPaint.setColor(letterColorHint);
 //                    }
-                    currentIndex = new ArrayList<>();
-                    currentIndex.add(r);
-                    currentIndex.add(c);
+                    currentIndex = new ArrayList<>(Arrays.asList(r, c));
                     if (solver.originalBoard[r][c] == 0 ||
                             solver.hintIndex.stream().anyMatch(currentIndex::equals)) {
                         if (text.equals(String.valueOf(solver.solvedBoard[r][c])) ) {
@@ -146,6 +154,10 @@ public class SudokuBoard extends View {
                         } else {
                             letterPaint.setColor(letterColorWrong);
                         }
+                    }
+
+                    if (!solver.isSolved && this.selectedNum != 0 && this.selectedNum == num && !selectedIndex.equals(currentIndex) ) {
+                        letterPaint.setColor(letterColorSameNum);
                     }
 
                     canvas.drawText(text, (c * cellSize) + ((cellSize - width) / 2),
@@ -168,12 +180,14 @@ public class SudokuBoard extends View {
                 width = letterPaint.measureText(text);
                 height = letterPaintBounds.height();
 
-                canvas.drawText(text, (c * cellSize) + ((cellSize - width) / 2),
+                if (!text.equals("0")) {
+                    canvas.drawText(text, (c * cellSize) + ((cellSize - width) / 2),
                         (r * cellSize + cellSize) - ((cellSize - height) / 2), letterPaint);
+                }
             }
-
             letterPaint.setColor(letterColor);
         }
+
     }
 
     private void colorCell(Canvas canvas, int row, int column) {
