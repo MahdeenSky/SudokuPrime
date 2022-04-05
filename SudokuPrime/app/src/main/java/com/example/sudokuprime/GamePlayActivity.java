@@ -204,6 +204,7 @@ public class GamePlayActivity extends AppCompatActivity {
 
     public void solve(View view) {
         if (!gameBoardSolver.isSolved) {
+            gameBoardSolver.board = gameBoardSolver.originalBoard;
             gameBoardSolver.getEmptyBoxIndexes();
 
             SolveBoardThread solveBoardThread = new SolveBoardThread();
