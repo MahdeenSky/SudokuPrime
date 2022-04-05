@@ -38,9 +38,9 @@ public class SudokuSolver {
 
     public void importBoard(int[][] board_) {
 
-        this.board = board_;
+        this.board = deepCopy(board_);
         this.originalBoard = deepCopy(board_);
-        this.solvedBoard = deepCopy(this.board);
+        this.solvedBoard = deepCopy(board_);
         this.solve();
     }
 
@@ -198,6 +198,10 @@ public class SudokuSolver {
 
     public int[][] getBoard() {
         return this.board;
+    }
+
+    public void resetHintIndex() {
+        this.hintIndex = new HashSet<>();
     }
 
     public ArrayList<ArrayList<Object>> getEmptyBoxIndex() {

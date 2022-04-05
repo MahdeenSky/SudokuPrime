@@ -11,17 +11,15 @@ import android.widget.Button;
 import android.widget.Chronometer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 
 public class GamePlayActivity extends AppCompatActivity {
 
     private SudokuBoard gameBoard;
     private SudokuSolver gameBoardSolver;
-    private SudokuGenerator gameBoardGenerator;
 
-    private Button enterBTN;
     private int[][] puzzle;
+    private Button currentBtn;
+    private int BtnNum;
 
     private Chronometer chronometer;
 
@@ -38,16 +36,14 @@ public class GamePlayActivity extends AppCompatActivity {
         gameBoard = findViewById(R.id.SudokuBoard);
         gameBoardSolver = gameBoard.getSolver();
         chronometer = findViewById(R.id.chronometer);
-        //TODO: have difficulty string change depending on difficulty selected in DifficultySelectActivity
-        puzzle = gameBoardGenerator.getRandomBoard(difficulty);
+
+        puzzle = SudokuGenerator.getRandomBoard(difficulty);
     }
     @Override
     protected void onStart() {
         super.onStart();
-        gameBoardSolver.importBoard(puzzle);
-        puzzle = SudokuWinCheck.copyBoard(puzzle);
 
-        // timer
+        gameBoardSolver.importBoard(puzzle);
         startTimer();
     }
 
@@ -57,11 +53,11 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     private Boolean checkSudoku() {
-        return SudokuWinCheck.isBoardSolved(gameBoardSolver.getBoard()) && !isIndexHint() && !gameBoardSolver.originalIndex();
+        return SudokuWinCheck.isBoardSolved(gameBoardSolver.getBoard()) && isNotIndexHint() && isNotOriginalIndex();
     }
 
     private void openWinScnActivity() {
-        if (!isGameSolved()) {
+        if (isNotSolved()) {
             chronometer.stop();
             int seconds = GamePlayActivity.getSecondsFromDurationString(chronometer.getText().toString());
             Intent i = new Intent(this, WinScnActivity.class);
@@ -72,138 +68,144 @@ public class GamePlayActivity extends AppCompatActivity {
         }
     }
 
-    private boolean isPuzzlePosZero() {
+    private boolean isNotIndexHint() {
         int selRow = gameBoardSolver.getSelectedRow();
         int selCol = gameBoardSolver.getSelectedColumn();
-        if(selRow == -1 && selCol == -1) {
-            return false;
-        }
-        return puzzle[selRow - 1][selCol - 1] == 0;
-    }
-
-    private boolean isIndexHint() {
-        int selRow = gameBoardSolver.getSelectedRow();
-        int selCol = gameBoardSolver.getSelectedColumn();
-        Log.i("Selected Indexes", String.valueOf(selRow) + String.valueOf(selCol));
+//        Log.i("Selected Indexes", String.valueOf(selRow) + String.valueOf(selCol));
         ArrayList<Integer> currentIndex = new ArrayList<>();
         currentIndex.add(selRow - 1);
         currentIndex.add(selCol - 1);
-        Log.i("is it a Hint", Boolean.toString(gameBoardSolver.hintIndex.stream().anyMatch(currentIndex::equals)));
-        Log.i("Hints", gameBoardSolver.hintIndex.toString());
-        return gameBoardSolver.hintIndex.stream().anyMatch(currentIndex::equals);
+//        Log.i("is it a Hint", Boolean.toString(gameBoardSolver.hintIndex.stream().anyMatch(currentIndex::equals)));
+//        Log.i("Hints", gameBoardSolver.hintIndex.toString());
+        return gameBoardSolver.hintIndex.stream().noneMatch(currentIndex::equals);
     }
 
-    private boolean isGameSolved() {
-        return gameBoardSolver.isSolved;
+    private boolean isNotSolved() {
+        return !gameBoardSolver.isSolved;
     }
 
-    public void BTNOnePress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(1);
+    private boolean isNotOriginalIndex() {
+        return !gameBoardSolver.originalIndex();
+    }
+
+    public void onNumBtnClicked(View v) {
+        if (isNotIndexHint() && isNotSolved() && isNotOriginalIndex()) {
+            currentBtn = (Button) v;
+            BtnNum = Integer.parseInt(currentBtn.getText().toString());
+            gameBoardSolver.setNumberPos(BtnNum);
             gameBoard.invalidate();
         }
         if (checkSudoku()) {
             openWinScnActivity();
         }
     }
-
-    public void BTNTwoPress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(2);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
-    public void BTNThreePress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(3);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
-    public void BTNFourPress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(4);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
-    public void BTNFivePress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(5);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
-    public void BTNSixPress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(6);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
-    public void BTNSevenPress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(7);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
-    public void BTNEightPress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(8);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
-    public void BTNNinePress(View view) {
-        if(isPuzzlePosZero() && !isIndexHint()  && !isGameSolved()) {
-            gameBoardSolver.setNumberPos(9);
-            gameBoard.invalidate();
-        }
-        if (checkSudoku()) {
-            openWinScnActivity();
-        }
-    }
-
+//    public void BTNOnePress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(1);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNTwoPress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(2);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNThreePress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(3);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNFourPress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(4);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNFivePress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(5);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNSixPress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(6);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNSevenPress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(7);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNEightPress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint() && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(8);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
+//
+//    public void BTNNinePress(View view) {
+//        if(isPuzzlePosZero() && !isIndexHint()  && !isGameSolved()) {
+//            gameBoardSolver.setNumberPos(9);
+//            gameBoard.invalidate();
+//        }
+//        if (checkSudoku()) {
+//            openWinScnActivity();
+//        }
+//    }
 
     public void clear(View view) {
-        if (!gameBoardSolver.isSolved && !isIndexHint() && !isGameSolved())
-        gameBoardSolver.setNumberPos(0);
+        if (isNotIndexHint() && isNotSolved() && isNotOriginalIndex()) {
+            gameBoardSolver.setNumberPos(0);
+            gameBoard.invalidate();
+        }
     }
 
     public void reset(View view) {
         gameBoardSolver.isSolved = false;
         gameBoardSolver.importBoard(puzzle);
-        gameBoardSolver.hintIndex = new HashSet<>();
+        gameBoardSolver.resetHintIndex();
         gameBoard.invalidate();
-        puzzle = SudokuWinCheck.copyBoard(puzzle);
         startTimer();
     }
 
     public void solve(View view) {
-        if (!gameBoardSolver.isSolved) {
+        if (isNotSolved()) {
             gameBoardSolver.board = gameBoardSolver.originalBoard;
             gameBoardSolver.getEmptyBoxIndexes();
 
@@ -220,7 +222,7 @@ public class GamePlayActivity extends AppCompatActivity {
     }
 
     public void hint(View v) {
-        if (!gameBoardSolver.isSolved) {
+        if (isNotSolved()) {
         gameBoardSolver.getEmptyBoxIndexes();
 
         if (gameBoardSolver.emptyBoxIndex.size() != 0) {
@@ -239,13 +241,13 @@ public class GamePlayActivity extends AppCompatActivity {
         if(parts.length < 2 || parts.length > 3)
             return 0;
 
-        int seconds = 0, minutes = 0, hours = 0;
+        int seconds, minutes, hours = 0;
 
         if(parts.length == 2){
             seconds = Integer.parseInt(parts[1]);
             minutes = Integer.parseInt(parts[0]);
         }
-        else if(parts.length == 3){
+        else {
             seconds = Integer.parseInt(parts[2]);
             minutes = Integer.parseInt(parts[1]);
             hours = Integer.parseInt(parts[0]);

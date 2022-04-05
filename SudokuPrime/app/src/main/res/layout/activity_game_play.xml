@@ -61,7 +61,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNOnePress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/one"
             android:textColor="@color/black"
             android:textSize="24sp"
@@ -73,7 +73,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNTwoPress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/two"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -84,7 +84,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNThreePress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/three"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -95,7 +95,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNFourPress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/four"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -106,7 +106,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNFivePress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/five"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -117,7 +117,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNSixPress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/six"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -128,7 +128,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNSevenPress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/seven"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -139,7 +139,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNEightPress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/eight"
             android:textColor="@color/black"
             android:textSize="24sp" />
@@ -150,7 +150,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:onClick="BTNNinePress"
+            android:onClick="onNumBtnClicked"
             android:text="@string/nine"
             android:textColor="@color/black"
             android:textSize="24sp" />

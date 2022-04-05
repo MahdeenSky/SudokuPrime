@@ -17,16 +17,6 @@ public class SudokuWinCheck {
         return rowCheck(board) && colCheck(board) && boxCheck(board);
     }
 
-    public static int[][] copyBoard(int[][] arr) {
-        int[][] copy = new int[9][9];
-        for(int i = 0; i < 9; i++) {
-            for(int j = 0; j < 9; j++) {
-                copy[i][j] = arr[i][j];
-            }
-        }
-        return copy;
-    }
-    
     public static boolean rowCheck(int [][] board) {
         HashSet<Integer> numsInRow;
         int num;
